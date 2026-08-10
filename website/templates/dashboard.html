@@ -30,6 +30,7 @@
 <br/>
 <h2>Expense chart</h2>
 <br/>
+<br/>
 
 <div style="width: 100%;">
     <canvas id="expenseChart"></canvas>
@@ -56,14 +57,19 @@
         data: {
             labels: formattedDates,
             datasets: [{
-                label: "Daily Expense",
                 data: totals,
                 borderWidth: 2,
+                borderColor: "green",
                 tension: 0.3
             }]
         },
         options: {
             responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
             scales: {
                 y: {
                     beginAtZero: true
