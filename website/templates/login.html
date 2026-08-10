@@ -5,7 +5,7 @@
 {% block content %}
     <form method="POST">
         <br />
-        <img src="images/logo.jpg" alt="Broke Check">
+        <img src="/images/logo.jpg" alt="Broke Check">
         <br />
         <h1 align="center">Login</h1>
         <div class="form-group">
@@ -31,7 +31,7 @@
         <label for="remember">Remember me</label>
         
         </div>
-        <p>Do not have an account? <a href="signup">Sign up</a></p>
+        <p>Do not have an account? <a href="{{ url_for('signup') }}">Sign up</a></p>
         <button type="submit" class="btn btn-primary">Login</button>
     </form>
 {% endblock %}
