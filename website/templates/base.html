@@ -30,10 +30,10 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbar">
                     <div class="navbar-nav">
-                        <a class="nav-item nav-link" id="dashboard" href="{{ url_for('dashboard') }}">Dashboard</a>
-                        <a class="nav-item nav-link" id="budget" href="{{ url_for('budget') }}">Budget</a>
-                        <a class="nav-item nav-link" id="expense" href="{{ url_for('expense') }}">Expense</a>
-                        <a class="nav-item nav-link" id="logout" href="{{ url_for('logout') }}">Logout</a>
+                        <a class="nav-item nav-link" id="dashboard" href="{{ url_for('views.dashboard') }}">Dashboard</a>
+                        <a class="nav-item nav-link" id="budget" href="{{ url_for('views.budget') }}">Budget</a>
+                        <a class="nav-item nav-link" id="expense" href="{{ url_for('views.expense') }}">Expense</a>
+                        <a class="nav-item nav-link" id="logout" href="{{ url_for('auth.logout') }}">Logout</a>
                         
                     </div>
                 </div>
