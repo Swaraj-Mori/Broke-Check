@@ -1,0 +1,83 @@
+{% extends "base.html" %}]
+{% block title %}Budget{% endblock %}
+
+{% block content %}
+<h1>Budget</h1>
+<br/>
+<br/>
+<h2>Total Budget</h2>
+<br/>
+<p>
+    <span class="fs-3 fw-bold">₹{{ total_expense }}</span> /₹{{ total_budget }}
+</p>
+<div class="progress" style="height: 30px;">
+    {% if total_expense/total_budget < 1 %}
+    <div class="progress-bar bg-success" style="width: {{ 100*total_expense/total_budget }}%; ">
+        {{ (100*total_expense)//total_budget }}%
+    </div>
+    {% elif total_expense/total_budget >= 1 %}
+    <div class="progress-bar bg-danger" style="width: {{ 100*total_expense/total_budget }}%;">
+        {{ (100*total_expense)//total_budget }}%
+    </div>
+    {% endif %}
+</div>
+<br/>
+<br/>
+<h2>Category Wise Budget</h2>
+<br/>
+<form method="POST">
+    <div class="row">
+
+        <div class="col-9">
+            <label for="category" class="form-label">Category Name</label>
+            <input type="text" id="category" name="category" class="form-control">
+        </div>
+
+        <div class="col-3">
+            <label for="categoryBudget" class="form-label">Budget</label>
+            <input type="number" id="categoryBudget" name="categoryBudget" class="form-control">
+        </div>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Add Category</button>
+</form>
+
+{% for i in range(user.categories.split(',')|length) %}
+
+{% set category = user.categories.split(',')[i] %}
+{% set budget = user.budgets.split(',')[i]|int %}
+{% set expense = category_wise_expenses[category] %}
+
+<br/>
+<br/>
+<div class="row align-items-center">
+    <div class="col-11"><h3>{{ category }}</h3></div>
+    {% if category != "Miscellaneous" %}
+    <div class="col-1">
+        <button type="button" class="close fs-2" title="Delete category" onClick='deleteCategory({{ category|tojson }})'>
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+</div>
+<br/>
+<p>
+    <span class="fs-4 fw-bold">₹{{ expense }}</span> /₹{{ budget }}
+</p>
+<div class="progress" style="height: 25px;">
+    {% if expense/budget < 1 %}
+    <div class="progress-bar bg-success" style="width: {{ 100*expense/budget }}%; ">
+        {{ (100*expense)//budget }}%
+    </div>
+    {% elif expense/budget >= 1 %}
+    <div class="progress-bar bg-danger" style="width: {{ 100*expense/budget }}%;">
+        {{ (100*expense)//budget }}%
+    </div>
+    {% endif %}
+</div>
+<br/>
+
+{% endfor %}
+
+
+{% endblock %}

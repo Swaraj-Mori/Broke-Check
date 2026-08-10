@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="fs-2">
+    <p>Hello {{ user.first_name }},</p>
+</div>
+<br/>
+<br/>
+<h2>Total Budget</h2>
+<br/>
+<p>
+    <span class="fs-3 fw-bold">₹{{ expense }}</span> /₹{{ budget }}
+</p>
+
+<div class="progress" style="height: 40px;">
+    {% if expense/budget < 1 %}
+    <div class="progress-bar bg-success" style="width: {{ 100*expense/budget }}%; ">
+        {{ (100*expense)//budget }}%
+    </div>
+    {% elif expense/budget >= 1 %}
+    <div class="progress-bar bg-danger" style="width: {{ 100*expense/budget }}%;">
+        {{ (100*expense)//budget }}%
+    </div>
+    {% endif %}
+</div>
+<br/>
+<br/>
+<br/>
+<h2>Expense chart</h2>
+<br/>
+
+<div style="width: 100%;">
+    <canvas id="expenseChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const dates = {{ dates | tojson }};
+    const totals = {{ totals | tojson }};
+
+    const formattedDates = dates.map(date => {
+        const d = new Date(date);
+        return d.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric"
+        });
+    });
+
+    const ctx = document.getElementById("expenseChart");
+
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: formattedDates,
+            datasets: [{
+                label: "Daily Expense",
+                data: totals,
+                borderWidth: 2,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+<br/>
+*Last 30 days
+
+{% endblock %}

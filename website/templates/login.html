@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <form method="POST">
+        <br />
+        <img src="images/logo.jpg" alt="Broke Check">
+        <br />
+        <h1 align="center">Login</h1>
+        <div class="form-group">
+            <label for="email" class="fs-6 fw-bold">Email Address</label>
+            <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                placeholder="Enter email"
+            />
+        </div>
+        <div class="form-group">
+            <label for="password" class="fs-6 fw-bold">Password</label> 
+            <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                placeholder="Enter password"
+            />
+        <input type="checkbox" id="remember" name="remember" value="true">
+        <label for="remember">Remember me</label>
+        
+        </div>
+        <p>Do not have an account? <a href="signup">Sign up</a></p>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+{% endblock %}
