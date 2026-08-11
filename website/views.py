@@ -180,26 +180,25 @@ def edit_category():
     user = User.query.get(current_user.id)
     categories = user.categories.split(',')
     budgets = user.budgets.split(',')
-
-    budgets[categories.index(old_category_name)] = category_budget
-    new_budgets = ""
-
-    for i, budget in enumerate(budgets):
-        new_budgets += f',{budget}' if i > 0 else budget
+  
+    category_name = category_name.capitalize() if category_name else ''
         
-    user.budgets = new_budgets    
+    if category_name in categories:
+        flash('Category already exists', category='error')
+    elif len(category_name) < 1:
+        flash('Category name too short', category='error')
+    elif int(category_budget) < 1:
+        flash('Budget must be greater than 0', category='error')
+    elif old_category_name in categories:
 
-    if old_category_name != "General":        
-        
-        category_name = category_name.capitalize()
-        
-        if category_name in categories:
-            flash('Category already exists', category='error')
-        elif len(category_name) < 1:
-            flash('Category name too short', category='error')
-        elif int(category_budget) < 1:
-            flash('Budget must be greater than 0', category='error')
-        elif old_category_name in categories:
+        budgets[categories.index(old_category_name)] = category_budget
+        new_budgets = ""
+        for i, budget in enumerate(budgets):
+            new_budgets += f',{budget}' if i > 0 else budget
+            
+        user.budgets = new_budgets    
+
+        if old_category_name != "General":      
 
             Expense.query.filter_by(category=old_category_name, user_id=current_user.id).update({"category": category_name})
 
@@ -210,8 +209,9 @@ def edit_category():
                 new_categories += f',{category}' if i > 0 else category
             
             user.categories = new_categories
-
-    flash('Category edited', category='success')
-    db.session.commit()
+            
+    if not failed:
+        flash('Category edited', category='success')
+        db.session.commit()
 
     return redirect(url_for('views.budget'))
