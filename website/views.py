@@ -183,7 +183,7 @@ def edit_category():
   
     category_name = category_name.capitalize() if category_name else ''
         
-    if category_name in categories:
+    if category_name in categories and old_category_name != category_name:
         flash('Category already exists', category='error')
     elif len(category_name) < 1 and old_category_name != "General":
         flash('Category name too short', category='error')
