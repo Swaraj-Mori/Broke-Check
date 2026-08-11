@@ -178,7 +178,7 @@ def delete_category():
 @views.route('/edit-category', methods=['POST'])
 def edit_category():
     old_category_name = request.form.get("old_category")
-    category_name = request.form.get("category_name").capitalize()
+    category_name = request.form.get("category_name")
     category_budget = request.form.get("budget")
 
     print(old_category_name, category_name, category_budget)
@@ -199,6 +199,9 @@ def edit_category():
         user.budgets = new_budgets
 
         if old_category_name != "General":
+
+            category_name = category_name.capitalize()
+            
             Expense.query.filter_by(category=old_category_name, user_id=current_user.id).update({"category": category_name})
 
             categories[categories.index(old_category_name)] = category_name
