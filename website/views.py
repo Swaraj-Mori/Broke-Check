@@ -210,7 +210,7 @@ def edit_category():
             
             user.categories = new_categories
             
-    if not failed:
+    
         flash('Category edited', category='success')
         db.session.commit()
 
