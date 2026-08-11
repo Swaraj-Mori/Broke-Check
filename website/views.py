@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, jsonify
+from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
 from .models import Expense, User
@@ -20,10 +20,7 @@ def dashboard():
                 db.func.coalesce(Expense.credit, 0)
             ).label("total")
         )
-        .filter(
-            Expense.user_id == current_user.id,
-            Expense.date >= one_month_ago
-        )
+        .filter(Expense.user_id == current_user.id, Expense.date >= one_month_ago)
         .group_by(db.func.date(Expense.date))
         .order_by(db.func.date(Expense.date))
         .all()
@@ -71,7 +68,7 @@ def budget():
         total_expenses[category] = 0
 
     try:
-        category_expenses = db.session.query(Expense.category, db.func.sum(Expense.debit), db.func.sum(Expense.credit)).group_by(Expense.category).all()
+        category_expenses = db.session.query(Expense.category, db.func.sum(Expense.debit), db.func.sum(Expense.credit)).filter(Expense.user_id == current_user.id).group_by(Expense.category).all()
 
         for i, (category, debit, credit) in enumerate(category_expenses):
             debit = debit or 0
@@ -138,8 +135,8 @@ def get_budget():
 def get_total_expense():
 
     try:
-        total_debit = int(db.session.query(db.func.sum(Expense.debit)).scalar())
-        total_credit = int(db.session.query(db.func.sum(Expense.credit)).scalar())
+        total_debit = int(db.session.query(db.func.sum(Expense.debit)).filter(Expense.user_id == current_user.id).scalar())
+        total_credit = int(db.session.query(db.func.sum(Expense.credit)).filter(Expense.user_id == current_user.id).scalar())
         total_expense = total_debit - total_credit
     except TypeError:
         total_expense = 0
@@ -170,13 +167,49 @@ def delete_category():
         for i, budget in enumerate(budgets):
             new_budgets += f',{budget}' if i > 0 else budget
 
-        print(new_categories)
-        print(new_budgets)
-
         user.categories = new_categories
         user.budgets = new_budgets
-
 
     db.session.commit()
 
     return jsonify({})
+
+
+@views.route('/edit-category', methods=['POST'])
+def edit_category():
+    old_category_name = request.form.get("old_category")
+    category_name = request.form.get("category_name").capitalize()
+    category_budget = request.form.get("budget")
+
+    print(old_category_name, category_name, category_budget)
+    
+    user = User.query.get(current_user.id)
+    categories = user.categories.split(',')
+    budgets = user.budgets.split(',')
+
+    
+    if old_category_name in categories:
+
+        budgets[categories.index(old_category_name)] = category_budget
+        new_budgets = ""
+
+        for i, budget in enumerate(budgets):
+            new_budgets += f',{budget}' if i > 0 else budget
+            
+        user.budgets = new_budgets
+
+        if old_category_name != "General":
+            Expense.query.filter_by(category=old_category_name, user_id=current_user.id).update({"category": category_name})
+
+            categories[categories.index(old_category_name)] = category_name
+            new_categories = ""
+
+            for i, category in enumerate(categories):
+                new_categories += f',{category}' if i > 0 else category
+            
+            user.categories = new_categories
+
+    flash('Category edited', category='success')
+    db.session.commit()
+
+    return redirect(url_for('views.budget'))
