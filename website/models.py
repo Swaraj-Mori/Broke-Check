@@ -19,6 +19,6 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(10000))
     first_name = db.Column(db.String(150))
-    categories = db.Column(db.String(100000), default="Miscellaneous")
+    categories = db.Column(db.String(100000), default="General")
     budgets = db.Column(db.String(100000), default="1000")
     expenses = db.relationship('Expense')
