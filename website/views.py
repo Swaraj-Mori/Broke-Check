@@ -185,7 +185,7 @@ def edit_category():
         
     if category_name in categories:
         flash('Category already exists', category='error')
-    elif len(category_name) < 1:
+    elif len(category_name) < 1 old_category_name != "General":
         flash('Category name too short', category='error')
     elif int(category_budget) < 1:
         flash('Budget must be greater than 0', category='error')
